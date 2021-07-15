@@ -19,3 +19,26 @@ task("mintTokens", "Mints tokens")
       console.log("Transaction:", tx.hash);
     }
   );
+
+task("approveSpending", "Allows address to spend tokens")
+  .addParam("amount", "Amount of tokens in ETH", undefined, types.int)
+  .addParam("address", "Address of future spender", undefined, types.string)
+  .setAction(
+    async ({ amount, address }: any, { ethers }: HardhatRuntimeEnvironment) => {
+      console.log(`Allow ${address} to spend token amount: ${amount}`);
+      const fuschuTokenInstance = await ethers.getContract("FuschuToken");
+      const parsedAmount = utils.parseEther(amount.toString());
+      const tx = await fuschuTokenInstance.approve(address, parsedAmount);
+      console.log("Transaction:", tx.hash);
+    }
+  );
+
+task("balanceOf", "Gets balance of specific address")
+  .addParam("address", "address", undefined, types.string)
+  .setAction(
+    async ({ address }: any, { ethers }: HardhatRuntimeEnvironment) => {
+      const fuschuTokenInstance = await ethers.getContract("FuschuToken");
+      const balance = await fuschuTokenInstance.balanceOf(address);
+      console.log(utils.formatEther(balance));
+    }
+  );
